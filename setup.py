@@ -6,20 +6,23 @@ with open("README.md") as fp:
 
 
 setuptools.setup(
-    name="spotzero",
-    version="0.0.1",
+    name="SpotZero",
+    version="0.1.0",
 
-    description="An empty CDK Python app",
+    description="SpotZero scheduled Fargate task",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
-    author="author",
+    author="Alexei Ledenev",
 
     package_dir={"": "spotzero"},
     packages=setuptools.find_packages(where="spotzero"),
 
     install_requires=[
         "aws-cdk.core==1.82.0",
+        "aws-cdk.aws_ecs==1.82.0",
+        "aws-cdk.aws_ecs_patterns==1.82.0",
+        "aws-cdk.aws_applicationautoscaling==1.82.0"
     ],
 
     python_requires=">=3.6",

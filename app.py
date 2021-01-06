@@ -2,10 +2,10 @@
 
 from aws_cdk import core
 
-from spotzero.spotzero_stack import SpotzeroStack
+from spotzero.spotzero_stack import SpotZeroStack
 
 
 app = core.App()
-SpotzeroStack(app, "spotzero")
+SpotZeroStack(app, "SpotZero")
 
 app.synth()
