@@ -1,5 +1,5 @@
 from aws_cdk import core, aws_ecs as ecs, aws_ecs_patterns as ecs_patterns, aws_ec2 as ec2, \
-    aws_iam as iam, aws_applicationautoscaling as autoscaling
+    aws_iam as iam, aws_applicationautoscaling as autoscaling, aws_logs as logs
 
 
 class SpotZeroStack(core.Stack):
@@ -17,7 +17,13 @@ class SpotZeroStack(core.Stack):
         role = iam.Role(self, "ContainerRole",
                         assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"))
         role.add_to_policy(
-            iam.PolicyStatement(actions=["sts:AssumeRole"], resources=["*"])
+            iam.PolicyStatement(
+                actions=["autoscaling:DescribeTags",
+                         "autoscaling:DescribeAutoScalingGroups",
+                         "autoscaling:UpdateAutoScalingGroup",
+                         "ec2:DescribeLaunchTemplateVersions",
+                         "autoscaling:CreateOrUpdateTags"],
+                resources=["*"])
         )
 
         # define ECS Fargate task
@@ -25,12 +31,10 @@ class SpotZeroStack(core.Stack):
                                                     cpu=256, memory_limit_mib=512, task_role=role)
         task_definition.add_container(
             "Container", image=ecs.ContainerImage.from_registry("doitintl/spotzero"),
-            command=["--role-arn=arn:aws:iam::906364353610:role/_test_role",
-                     "--external-id=quick.brown.fox",
-                     "recommend"],
-            cpu=256,
-            memory_limit_mib=512,
-            logging=ecs.AwsLogDriver(stream_prefix="SpotZero")
+            command=["update", "--mfl=1"],
+            logging=ecs.AwsLogDriver(stream_prefix="SpotZero",
+                                     log_retention=logs.RetentionDays.THREE_DAYS,
+                                     datetime_format="%Y/%m/%d %H:%M:%S")
         )
         task_definition_options = ecs_patterns.ScheduledFargateTaskDefinitionOptions(
             task_definition=task_definition
@@ -40,5 +44,4 @@ class SpotZeroStack(core.Stack):
         ecs_patterns.ScheduledFargateTask(self, "Task",
                                           scheduled_fargate_task_definition_options=task_definition_options,
                                           cluster=cluster,
-                                          schedule=autoscaling.Schedule.expression("rate(5 minutes)")
-                                          )
+                                          schedule=autoscaling.Schedule.expression("rate(30 minutes)"))
