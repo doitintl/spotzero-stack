@@ -19,10 +19,10 @@ setuptools.setup(
     packages=setuptools.find_packages(where="spotzero"),
 
     install_requires=[
-        "aws-cdk.core==1.82.0",
-        "aws-cdk.aws_ecs==1.82.0",
-        "aws-cdk.aws_ecs_patterns==1.82.0",
-        "aws-cdk.aws_applicationautoscaling==1.82.0"
+        "aws-cdk.core==1.83.0",
+        "aws-cdk.aws_ecs==1.83.0",
+        "aws-cdk.aws_ecs_patterns==1.83.0",
+        "aws-cdk.aws_applicationautoscaling==1.83.0"
     ],
 
     python_requires=">=3.6",
